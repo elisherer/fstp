@@ -8,11 +8,11 @@ const cors = require("./modules/cors");
 const auth = require("./modules/auth");
 const _static = require("./modules/static");
 const nocache = require("./modules/nocache");
-const crudfs = require("./modules/crudfs");
+const crud = require("./modules/crud");
 
 /**
  *
- * @param options {CrudfsOptions}
+ * @param options {FscsOptions}
  */
 const createFileServer = options => {
   const token = options.token || crypto.randomBytes(16).toString("hex");
@@ -28,7 +28,7 @@ const createFileServer = options => {
         if (!options.public) auth(ctx);
         if (_static(ctx)) return;
         nocache(ctx);
-        crudfs(ctx);
+        crud(ctx);
       } catch (e) {
         if (e instanceof HTTPResponseError) {
           return e.process(res);

@@ -3,7 +3,7 @@ const path = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 
-/** @type CrudfsOptions */
+/** @type FscsOptions */
 const argv = yargs(hideBin(process.argv))
   .usage("$0 [path]", "Run the server")
   .option("port", {
@@ -35,6 +35,12 @@ const argv = yargs(hideBin(process.argv))
     default: "",
     type: "string",
     description: "Path prefix (e.g. /some-route)"
+  })
+  .option("cors", {
+    alias: "c",
+    default: true,
+    type: "boolean",
+    description: "Whether to allow CORS"
   })
   .option("public", {
     alias: "u",

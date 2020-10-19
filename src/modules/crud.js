@@ -30,7 +30,7 @@ const HTML_TEMPLATE = `<!DOCTYPE html>
   <tr><td colspan="5"><hr></td></tr>
   {{body}}  
   <tr><td colspan="5"><hr></td></tr>
-  <tr><td colspan="5">crudfs © ${new Date().getFullYear()}</td></tr>
+  <tr><td colspan="5">fscs © ${new Date().getFullYear()}</td></tr>
 </tbody>
 </table>
 </body>

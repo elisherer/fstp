@@ -1,4 +1,4 @@
-declare interface CrudfsOptions {
+declare interface FscsOptions {
   /**
    *
    */

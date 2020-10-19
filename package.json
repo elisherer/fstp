@@ -1,17 +1,17 @@
 {
-  "name": "crudfs",
+  "name": "fscs",
   "version": "0.0.1-alpha",
-  "description": "Serve your file system via CRUD REST API",
+  "description": "File System CRUD Server",
   "main": "./src/server.js",
   "bin": {
-    "crudfs": "./bin/index.js"
+    "fscs": "./bin/index.js"
   },
   "scripts": {
     "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/elisherer/crudfs.git"
+    "url": "git+https://github.com/elisherer/fscs.git"
   },
   "keywords": [
     "crud",
@@ -27,9 +27,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/elisherer/crudfs/issues"
+    "url": "https://github.com/elisherer/fscs/issues"
   },
-  "homepage": "https://github.com/elisherer/crudfs#readme",
+  "homepage": "https://github.com/elisherer/fscs#readme",
   "dependencies": {
     "mime": "2.4.6",
     "yargs": "16.1.0"
