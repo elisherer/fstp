@@ -1,0 +1,40 @@
+{
+  "name": "crudfs",
+  "version": "0.9.0",
+  "description": "Serve your file system via CRUD REST API",
+  "main": "./src/server.js",
+  "bin": {
+    "crudfs": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elisherer/crudfs.git"
+  },
+  "keywords": [
+    "crud",
+    "fileserver",
+    "filesystem",
+    "fs",
+    "rest",
+    "api"
+  ],
+  "author": {
+    "name": "Eli Sherer",
+    "email": "eli.sherer@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elisherer/crudfs/issues"
+  },
+  "homepage": "https://github.com/elisherer/crudfs#readme",
+  "dependencies": {
+    "mime": "2.4.6",
+    "yargs": "16.1.0"
+  },
+  "devDependencies": {
+    "@types/yargs": "15.0.9"
+  }
+}
