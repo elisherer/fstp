@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
-const mime = require('mime');
-const HTTPResponseError = require('../HTTPResponseError');
+const mime = require("mime");
+const HTTPResponseError = require("../HTTPResponseError");
 
 const HTML_TEMPLATE = `<!DOCTYPE html>
 <html lang="en">
@@ -34,12 +34,12 @@ const HTML_TEMPLATE = `<!DOCTYPE html>
 </tbody>
 </table>
 </body>
-</html>`
+</html>`;
 
 module.exports = ctx => {
   const { req, res, url, options, log } = ctx;
 
-  if (options.readonly && req.method !== 'GET') {
+  if (options.readonly && req.method !== "GET") {
     throw new HTTPResponseError(405, "File system is read-only");
   }
 
@@ -53,52 +53,65 @@ module.exports = ctx => {
     throw new HTTPResponseError(403, "Path traversal is not allowed");
   }
 
-  if (!options.hidden && /\/\.[^.\\]/.test(url.pathname)) { // no hidden files / folders (unless allowed)
+  if (!options.hidden && /\/\.[^.\\]/.test(url.pathname)) {
+    // no hidden files / folders (unless allowed)
     throw new HTTPResponseError(403, "No access to forbidden paths");
   }
 
   const stats = fs.existsSync(filePath) && fs.lstatSync(filePath);
-  if (stats && !stats.isFile() && !stats.isDirectory()) { // not allowing access for non-files/directories
+  if (stats && !stats.isFile() && !stats.isDirectory()) {
+    // not allowing access for non-files/directories
     throw new HTTPResponseError(403, "Only files and directories access is allowed");
   }
-  if (stats && stats.isDirectory() && !relativePathname.endsWith('/')) {
-    relativePathname += '/';
+  if (stats && stats.isDirectory() && !relativePathname.endsWith("/")) {
+    relativePathname += "/";
   }
 
   switch (req.method) {
     case "GET": // get folder list, file content
       if (stats.isFile()) {
-        log('> Reading file: ' + filePath);
-        res.setHeader('Content-Type', mime.getType(filePath));
-        res.setHeader('Content-Length', stats.size);
-        res.setHeader('Last-Modified', stats.mtime);
+        log("> Reading file: " + filePath);
+        res.setHeader("Content-Type", mime.getType(filePath));
+        res.setHeader("Content-Length", stats.size);
+        res.setHeader("Last-Modified", stats.mtime);
         res.end(fs.readFileSync(filePath));
       } else {
-        log('> Reading directory: ' + filePath);
-        const files = fs.readdirSync(filePath)
-          .filter(f => options.hidden || f[0] !== '.')
+        log("> Reading directory: " + filePath);
+        const files = fs
+          .readdirSync(filePath)
+          .filter(f => options.hidden || f[0] !== ".")
           .map(f => {
-          const fp = path.join(filePath, f);
-          const fileStats = fs.statSync(fp);
-          return {
-            name: f,
-            dir: fileStats.isDirectory(),
-            size: fileStats.size,
-            mtime: fileStats.mtime,
-            mime: mime.getType(fp)
-          }
-        }).sort((a, b) => (b.dir - a.dir) || (a.name.localeCompare(b.name)));
-        if (req.headers.accept.includes('application/json')) {
-          res.setHeader('Content-Type', 'application/json');
+            const fp = path.join(filePath, f);
+            const fileStats = fs.statSync(fp);
+            return {
+              name: f,
+              dir: fileStats.isDirectory(),
+              size: fileStats.size,
+              mtime: fileStats.mtime,
+              mime: mime.getType(fp)
+            };
+          })
+          .sort((a, b) => b.dir - a.dir || a.name.localeCompare(b.name));
+        if (req.headers.accept.includes("application/json")) {
+          res.setHeader("Content-Type", "application/json");
           res.write(JSON.stringify(files));
           res.end();
-        } else { // not requesting json
-          res.setHeader('Content-Type', 'text/html');
+        } else {
+          // not requesting json
+          res.setHeader("Content-Type", "text/html");
           let html = HTML_TEMPLATE.replace(/\{\{path}}/g, relativePathname);
-          let body = relativePathname === '/' ? "" : `<tr><td>📁</td><td><a href="${relativePathname.split('/').slice(0,-2).join('/') || "/"}">..</a></td></tr>`;
-          for(let f = 0; f < files.length; f++) {
+          let body =
+            relativePathname === "/"
+              ? ""
+              : `<tr><td>📁</td><td><a href="${
+                  relativePathname.split("/").slice(0, -2).join("/") || "/"
+                }">..</a></td></tr>`;
+          for (let f = 0; f < files.length; f++) {
             let file = files[f];
-            file.name = file.name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            file.name = file.name
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
             body += `<tr>
     <td>${file.dir ? "📁" : "📄"}</td>
     <td><a href=".${relativePathname}${file.name}"><span>${file.name}</span></a></td>
@@ -106,23 +119,23 @@ module.exports = ctx => {
 </tr>
 `;
           }
-          res.end(html.replace('{{body}}', body));
+          res.end(html.replace("{{body}}", body));
         }
       }
       break;
     case "POST": // create dir
-      log('> Creating path: ' + filePath);
+      log("> Creating path: " + filePath);
       fs.mkdirSync(filePath, 0o777);
       break;
     case "PUT": // create / update file
-      log('> Writing file: ' + filePath);
+      log("> Writing file: " + filePath);
       const stream = fs.createWriteStream(filePath);
       req.pipe(stream); // TODO: limit data length?
-      stream.on('end', function () {
+      stream.on("end", function () {
         res.statusCode = 204;
         res.end();
       });
-      stream.on('error', err => {
+      stream.on("error", err => {
         throw err;
       });
       return;
@@ -142,10 +155,10 @@ module.exports = ctx => {
         throw new HTTPResponseError(404);
       }
       if (stats.isFile()) {
-        log('> Deleting file: ' + filePath);
+        log("> Deleting file: " + filePath);
         fs.unlinkSync(filePath);
       } else {
-        log('> Deleting directory: ' + filePath);
+        log("> Deleting directory: " + filePath);
         fs.rmdirSync(filePath);
       }
       break;
@@ -155,4 +168,3 @@ module.exports = ctx => {
   res.statusCode = 204;
   res.end();
 };
-

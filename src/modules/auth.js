@@ -1,4 +1,4 @@
-const HTTPResponseError = require('../HTTPResponseError');
+const HTTPResponseError = require("../HTTPResponseError");
 
 module.exports = ctx => {
   const { req, token } = ctx;

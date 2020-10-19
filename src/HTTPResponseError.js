@@ -5,7 +5,7 @@ const DefaultMessages = {
   [404]: "Not Found",
   [405]: "Method Not Allowed",
   [500]: "Internal Server Error"
-}
+};
 
 class HTTPResponseError extends Error {
   constructor(statusCode, message) {
@@ -16,7 +16,7 @@ class HTTPResponseError extends Error {
 
   process(res) {
     res.statusCode = this.statusCode;
-    res.setHeader('Content-Type', 'application/json');
+    res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ message: this.message || DefaultMessages[this.statusCode] }));
   }
 }
