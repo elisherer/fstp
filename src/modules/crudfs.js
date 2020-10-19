@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const mime = require("mime");
-const HTTPResponseError = require("../HTTPResponseError");
+const { HTTPResponseError } = require("../HTTPResponseError");
 
 const HTML_TEMPLATE = `<!DOCTYPE html>
 <html lang="en">
@@ -123,10 +123,12 @@ module.exports = ctx => {
         }
       }
       break;
+
     case "POST": // create dir
       log("> Creating path: " + filePath);
       fs.mkdirSync(filePath, 0o777);
       break;
+
     case "PUT": // create / update file
       log("> Writing file: " + filePath);
       const stream = fs.createWriteStream(filePath);
@@ -139,6 +141,7 @@ module.exports = ctx => {
         throw err;
       });
       return;
+
     case "PATCH": // rename / move
       if (!url.searchParams.to) {
         throw new HTTPResponseError(400, "'to' query parameter is required.");
@@ -150,6 +153,7 @@ module.exports = ctx => {
       }
       fs.renameSync(filePath, newPath);
       break;
+
     case "DELETE": // delete file / dir
       if (!stats && !fs.existsSync(filePath)) {
         throw new HTTPResponseError(404);
@@ -162,6 +166,7 @@ module.exports = ctx => {
         fs.rmdirSync(filePath);
       }
       break;
+
     default:
       throw new HTTPResponseError(405);
   }

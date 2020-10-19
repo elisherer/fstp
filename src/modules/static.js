@@ -8,9 +8,9 @@ const favicon = Buffer.from(
 );
 
 module.exports = ctx => {
-  const { res, url } = ctx;
+  const { req, res, url } = ctx;
 
-  if (url.pathname === "/favicon.ico") {
+  if (req.method === "GET" && url.pathname === "/favicon.ico") {
     res.setHeader("Content-Type", "image/x-icon");
     res.end(favicon);
     return true;

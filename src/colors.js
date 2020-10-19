@@ -1,7 +1,9 @@
-module.exports.red = value => "[31m" + value + "[39m";
-module.exports.green = value => "[32m" + value + "[39m";
-module.exports.yellow = value => "[33m" + value + "[39m";
-module.exports.blue = value => "[34m" + value + "[39m";
-module.exports.magenta = value => "[35m" + value + "[39m";
-module.exports.cyan = value => "[36m" + value + "[39m";
-module.exports.grey = value => "[90m" + value + "[39m";
+const ESC = "[",
+  END = ESC + "39m";
+module.exports.red = value => ESC + "31m" + value + END;
+module.exports.green = value => ESC + "32m" + value + END;
+module.exports.yellow = value => ESC + "33m" + value + END;
+module.exports.blue = value => ESC + "34m" + value + END;
+module.exports.magenta = value => ESC + "35m" + value + END;
+module.exports.cyan = value => ESC + "36m" + value + END;
+module.exports.grey = value => ESC + "90m" + value + END;

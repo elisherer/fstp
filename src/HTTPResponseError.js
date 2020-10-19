@@ -10,7 +10,7 @@ const DefaultMessages = {
 class HTTPResponseError extends Error {
   constructor(statusCode, message) {
     super(message);
-    this.name = "HttpError";
+    this.name = "HTTPResponseError";
     this.statusCode = statusCode;
   }
 
@@ -21,4 +21,12 @@ class HTTPResponseError extends Error {
   }
 }
 
-module.exports = HTTPResponseError;
+class HTTPUnauthorizedError extends HTTPResponseError {
+  constructor() {
+    super(401, "");
+    this.name = "HTTPUnauthorizedError";
+  }
+}
+
+exports.HTTPResponseError = HTTPResponseError;
+exports.HTTPUnauthorizedError = HTTPUnauthorizedError;

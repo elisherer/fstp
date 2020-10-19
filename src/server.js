@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const http = require("http");
 const { blue, green, red } = require("./colors");
-const HTTPResponseError = require("./HTTPResponseError");
+const { HTTPResponseError } = require("./HTTPResponseError");
 
 const logger = require("./modules/logger");
 const cors = require("./modules/cors");

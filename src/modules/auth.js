@@ -1,8 +1,8 @@
-const HTTPResponseError = require("../HTTPResponseError");
+const { HTTPUnauthorizedError } = require("../HTTPResponseError");
 
 module.exports = ctx => {
   const { req, token } = ctx;
   if (req.headers.authorization !== `Bearer ${token}`) {
-    throw new HTTPResponseError(401);
+    throw new HTTPUnauthorizedError();
   }
 };
