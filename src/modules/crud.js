@@ -68,7 +68,10 @@ module.exports = ctx => {
   }
 
   switch (req.method) {
-    case "GET": // get folder list, file content
+    case "GET": { // get folder list, file content
+      if (!stats && !fs.existsSync(filePath)) {
+        throw new HTTPResponseError(404);
+      }
       if (stats.isFile()) {
         log("> Reading file: " + filePath);
         res.setHeader("Content-Type", mime.getType(filePath));
@@ -80,7 +83,9 @@ module.exports = ctx => {
         const files = fs
           .readdirSync(filePath)
           .filter(f => options.hidden || f[0] !== ".")
-          .map(f => {
+          .map(
+            /** @returns {FscsFileDescriptor} */
+            f => {
             const fp = path.join(filePath, f);
             const fileStats = fs.statSync(fp);
             return {
@@ -94,7 +99,7 @@ module.exports = ctx => {
           .sort((a, b) => b.dir - a.dir || a.name.localeCompare(b.name));
         if (req.headers.accept.includes("application/json")) {
           res.setHeader("Content-Type", "application/json");
-          res.write(JSON.stringify(files));
+          res.write(JSON.stringify({result: files}, null, 2));
           res.end();
         } else {
           // not requesting json
@@ -104,8 +109,8 @@ module.exports = ctx => {
             relativePathname === "/"
               ? ""
               : `<tr><td>📁</td><td><a href="${
-                  relativePathname.split("/").slice(0, -2).join("/") || "/"
-                }">..</a></td></tr>`;
+                relativePathname.split("/").slice(0, -2).join("/") || "/"
+              }">..</a></td></tr>`;
           for (let f = 0; f < files.length; f++) {
             let file = files[f];
             file.name = file.name
@@ -123,13 +128,13 @@ module.exports = ctx => {
         }
       }
       break;
-
-    case "POST": // create dir
+    }
+    case "POST": { // create dir
       log("> Creating path: " + filePath);
-      fs.mkdirSync(filePath, 0o777);
+      fs.mkdirSync(filePath, {recursive: true});
       break;
-
-    case "PUT": // create / update file
+    }
+    case "PUT": { // create / update file
       log("> Writing file: " + filePath);
       const stream = fs.createWriteStream(filePath);
       req.pipe(stream); // TODO: limit data length?
@@ -141,20 +146,24 @@ module.exports = ctx => {
         throw err;
       });
       return;
-
-    case "PATCH": // rename / move
-      if (!url.searchParams.to) {
+    }
+    case "PATCH": {// rename / move
+      if (!url.searchParams.has("to")) {
         throw new HTTPResponseError(400, "'to' query parameter is required.");
       }
-      log(`> Renaming: ${filePath} (to ${url.searchParams.to})`);
-      const newPath = path.join(options.path, url.searchParams.to);
+      const to = url.searchParams.get("to");
+      if (!stats && !fs.existsSync(filePath)) {
+        throw new HTTPResponseError(404);
+      }
+      log(`> Renaming: ${filePath} (to ${to})`);
+      const newPath = path.join(options.path, to);
       if (!newPath.startsWith(options.path)) {
         throw new HTTPResponseError(403, "Path traversal is not allowed");
       }
       fs.renameSync(filePath, newPath);
       break;
-
-    case "DELETE": // delete file / dir
+    }
+    case "DELETE": { // delete file / dir
       if (!stats && !fs.existsSync(filePath)) {
         throw new HTTPResponseError(404);
       }
@@ -162,11 +171,12 @@ module.exports = ctx => {
         log("> Deleting file: " + filePath);
         fs.unlinkSync(filePath);
       } else {
-        log("> Deleting directory: " + filePath);
-        fs.rmdirSync(filePath);
+        const isRecursive = url.searchParams.has("recursive");
+        log("> Deleting directory: " + filePath + (isRecursive ? " (recursive)" : ""));
+        fs.rmdirSync(filePath, isRecursive ? {recursive: true} : null);
       }
       break;
-
+    }
     default:
       throw new HTTPResponseError(405);
   }

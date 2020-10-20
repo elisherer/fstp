@@ -1,6 +1,6 @@
 {
   "name": "fscs",
-  "version": "0.0.1-alpha",
+  "version": "0.1.0",
   "description": "File System CRUD Server",
   "main": "./src/server.js",
   "bin": {

@@ -17,7 +17,7 @@ class HTTPResponseError extends Error {
   process(res) {
     res.statusCode = this.statusCode;
     res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ message: this.message || DefaultMessages[this.statusCode] }));
+    res.end(JSON.stringify({ error: this.message || DefaultMessages[this.statusCode] }));
   }
 }
 
