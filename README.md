@@ -1,4 +1,4 @@
-# fscs &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/elisherer/fscs/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/fscs.svg?style=flat)](https://www.npmjs.com/package/fscs) ![Tests Status](https://github.com/elisherer/fcsc/workflows/test/badge.svg) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+# fscs &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/elisherer/fscs/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/fscs.svg?style=flat)](https://www.npmjs.com/package/fscs) ![Build and Test](https://github.com/elisherer/fscs/workflows/Build%20and%20Test/badge.svg) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
 File System CRUD server
 
