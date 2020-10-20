@@ -24,7 +24,7 @@ const createFileServer = options => {
         const url = new URL(req.url, `http://${req.headers.host}`);
         const ctx = { req, res, options, token, log, url };
         if (options.verbose) logger(ctx);
-        if (options.cors) cors(ctx);
+        if (options.cors && cors(ctx)) return;
         if (!options.public) auth(ctx);
         if (_static(ctx)) return;
         nocache(ctx);

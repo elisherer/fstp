@@ -137,14 +137,19 @@ module.exports = ctx => {
     case "PUT": { // create / update file
       log("> Writing file: " + filePath);
       const stream = fs.createWriteStream(filePath);
-      req.pipe(stream); // TODO: limit data length?
-      stream.on("end", function () {
-        res.statusCode = 204;
-        res.end();
+      let failed = false;
+      stream.on("close", function () {
+        if (!failed) {
+          res.statusCode = 204;
+          res.end();
+        }
       });
       stream.on("error", err => {
-        throw err;
+        failed = true;
+        console.error(err);
+        new HTTPResponseError(500).process(res);
       });
+      req.pipe(stream);
       return;
     }
     case "PATCH": {// rename / move
