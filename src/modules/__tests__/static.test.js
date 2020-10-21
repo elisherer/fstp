@@ -2,7 +2,7 @@ const _static = require("../static");
 
 const getFaviconCtx = () => ({
   req: { method: "GET" },
-  url: { pathname: "/favicon.ico" },
+  pathname: "/favicon.ico",
   res: { setHeader: jest.fn(), end: jest.fn() }
 });
 
@@ -17,7 +17,7 @@ test("serve favicon", () => {
 
 test("not serve favicon", () => {
   let ctx = getFaviconCtx(); //clone
-  ctx.url.pathname = "favicon.ico"; // missing slash
+  ctx.pathname = "favicon.ico"; // missing slash
   _static(ctx);
   expect(ctx.res.setHeader).not.toHaveBeenCalled();
   expect(ctx.res.end).not.toHaveBeenCalled();

@@ -21,8 +21,9 @@ const createFileServer = options => {
     .createServer((req, res) => {
       try {
         const log = options.verbose ? (...args) => console.log(...args) : () => {};
+        HTTPResponseError.log = log;
         const url = new URL(req.url, `http://${req.headers.host}`);
-        const ctx = { req, res, options, token, log, url };
+        const ctx = { req, res, options, token, log, url, pathname: decodeURIComponent(url.pathname) };
         if (options.verbose) logger(ctx);
         if (options.cors && cors(ctx)) return;
         if (!options.public) auth(ctx);

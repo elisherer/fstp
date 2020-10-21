@@ -50,11 +50,16 @@ To disable that behavior, use the `--public` option (this will also allow to use
 
 ```bash
 curl localhost:8210/some-dir/some-file.txt
+curl localhost:8210/some-dir/some-file.txt?tail
+curl localhost:8210/some-dir/some-file.txt?tail=20
 ```
 
 Response is the file's content
 - `Content-Type` will contain the MIME-Type as and if detected by [`mime`](https://github.com/broofa/mime).
 - `Last-Modified` will hold the date of last modification time on file system.
+
+**Query parameters**
+-`tail` - If specified, only the last N lines will be returned (default is 10) (Only 'text/' and 'application/' mime-types are supported).
 
 ### Read directory
 

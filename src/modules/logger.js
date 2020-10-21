@@ -1,4 +1,4 @@
 module.exports = ctx => {
-  const { req, log } = ctx;
-  log(`${req.method} ${req.url}`);
+  const { req, pathname, url, log } = ctx;
+  log(`${req.method} ${pathname}${url.search || ""}`);
 };

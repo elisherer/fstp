@@ -1,16 +1,16 @@
 const favicon = Buffer.from(
-  "AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEAB" +
-    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/" +
-    "AAAA/wD/AP//AAD///8A//////////////////////////////////+f/5mZ/////5////mf////mZn5mf////+f/5mZn////5mZ+Zmf" +
-    "////////////+Z+f+fmZ+Z+f/5/5+fn5+Z//mZ/5+fn5mf+f+fn5+fn5mZmf+fn5n////////////////////////wAA//8AAP//" +
-    "AAD3HwAA9+8AAPGfAAD3fwAA8Y8AAP//AACWiQAAdqoAAHGqAAB2qgAAkakAAP//AAD//wAA",
+  "AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAA" +
+  "gIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8A//////////8AAAAAAAAAAAu7u7u7u7uwC7u7" +
+  "u7u7u7ALu7u7u7u7sAu7u7u7u7uwC7u7u7u7u7ALu7u7u7u7sAu7u7u7u7uwC7u7u7u7u7ALu7u7u7u7sAu7uwAAAAAAC7u7D/////8A" +
+  "AAD//////////////////////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAB/wAAg/8A" +
+  "AP//AAD//wAA",
   "base64"
 );
 
 module.exports = ctx => {
-  const { req, res, url } = ctx;
+  const { req, res, pathname } = ctx;
 
-  if (req.method === "GET" && url.pathname === "/favicon.ico") {
+  if (req.method === "GET" && pathname === "/favicon.ico") {
     res.setHeader("Content-Type", "image/x-icon");
     res.end(favicon);
     return true;

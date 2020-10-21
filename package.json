@@ -1,12 +1,13 @@
 {
   "name": "fscs",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "File System CRUD Server",
   "main": "./src/server.js",
   "bin": {
     "fscs": "./bin/index.js"
   },
   "scripts": {
+    "dev": "node ./bin/index.js -uv",
     "test": "jest"
   },
   "repository": {
@@ -32,6 +33,7 @@
   "homepage": "https://github.com/elisherer/fscs#readme",
   "dependencies": {
     "mime": "2.4.6",
+    "read-last-lines": "1.7.2",
     "yargs": "16.1.0"
   },
   "devDependencies": {

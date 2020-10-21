@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Index of {{path}}</title>
+  <meta name="viewport" content="width=device-width">
+  <style>
+    td:not(:first-of-type), th:not(:first-of-type) { padding-left: 8px; min-width: 100px; text-align: left; }
+    td:nth-of-type(4), th:nth-of-type(4) { text-align: right; }
+  </style>
+</head>
+<body>
+<h1>Index of {{path}}</h1>
+<form name="main">
+  <p>
+    <button onclick="new_folder.apply(this, arguments)">📁 New Folder</button>&nbsp;
+    <button onclick="delete_entry.apply(this, arguments)">🗑️ Delete selection</button>&nbsp;
+    <button onclick="move_entry.apply(this, arguments)">✏️ Rename/Mode selection</button>&nbsp;
+  </p>
+  <table>
+    <thead>
+    <tr>
+      <th valign="top">&nbsp;</th>
+      <th>Name</th>
+      <th>Last modified</th>
+      <th>Size</th>
+      <th>Type</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr><td colspan="5"><hr></td></tr>
+    {{body}}
+    <tr><td colspan="5"><hr></td></tr>
+    <tr><td colspan="5">fscs © {{year}}</td></tr>
+    </tbody>
+  </table>
+</form>
+<script>
+  var root = location.origin + (location.pathname === '/' ? "" : location.pathname) + "/";
+  function new_folder(e) {
+    e.preventDefault();
+    var new_name = prompt("New folder name:");
+    if (new_name) {
+      fetch(root + new_name, { method: 'POST' }).then(res => {
+        if (res.status < 300) { location.reload(); }
+        else { alert('Delete failed'); }
+      });
+    }
+  }
+  function delete_entry(e) {
+    e.preventDefault();
+    var selection = document.forms.main.selection.value;
+    if (!selection) {
+      return alert('Please select some entry first');
+    }
+    if (confirm('Are you sure you want to delete ' + selection + '?'))
+      fetch(root + selection, { method: 'DELETE' }).then(res => {
+        if (res.status < 300) { location.reload(); }
+        else { alert('Delete failed'); }
+      });
+  }
+  function move_entry(e) {
+    e.preventDefault();
+    var selection = document.forms.main.selection.value;
+    if (!selection) {
+      return alert('Please select some entry first');
+    }
+    var new_path = prompt('Provide a new path:', decodeURIComponent(location.pathname) + selection);
+    if (new_path)
+      fetch(root + selection + '?to=' + encodeURIComponent(new_path), { method: 'PATCH' }).then(res => {
+        if (res.status < 300) { location.reload(); }
+        else { alert('Rename/Move failed'); }
+      });
+  }
+</script>
+</body>
+</html>

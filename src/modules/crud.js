@@ -1,59 +1,31 @@
 const fs = require("fs");
 const path = require("path");
 const mime = require("mime");
+const readLastLines = require('read-last-lines');
 const { HTTPResponseError } = require("../HTTPResponseError");
 
-const HTML_TEMPLATE = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Index of {{path}}</title>
-  <meta name="viewport" content="width=device-width">
-  <style>
-  td:not(:first-of-type), th:not(:first-of-type) { padding-left: 8px; min-width: 100px; text-align: left; }
-  td:nth-of-type(4), th:nth-of-type(4) { text-align: right; }
-  </style>
-</head>
-<body>
-<h1>Index of {{path}}</h1>
-<table>
-<thead>
-  <tr>
-    <th valign="top">&nbsp;</th>
-    <th>Name</th>
-    <th>Last modified</th>
-    <th>Size</th>
-    <th>Type</th>
-  </tr>
-</thead>
-<tbody>
-  <tr><td colspan="5"><hr></td></tr>
-  {{body}}  
-  <tr><td colspan="5"><hr></td></tr>
-  <tr><td colspan="5">fscs © ${new Date().getFullYear()}</td></tr>
-</tbody>
-</table>
-</body>
-</html>`;
+const HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, 'assets/listing.html'), 'utf8')
+  .replace('{{year}}', new Date().getFullYear().toString());
+const pdate = date => date.toISOString().replace(/[TZ]/g,' ');
 
 module.exports = ctx => {
-  const { req, res, url, options, log } = ctx;
+  const { req, res, url, pathname, options, log } = ctx;
 
   if (options.readonly && req.method !== "GET") {
     throw new HTTPResponseError(405, "File system is read-only");
   }
 
-  if (!url.pathname.startsWith(options.prefix)) {
+  if (!pathname.startsWith(options.prefix)) {
     throw new HTTPResponseError(404);
   }
 
-  let relativePathname = url.pathname.substr(options.prefix.length);
-  const filePath = path.join(options.path, relativePathname);
+  let relativePathname = pathname.substr(options.prefix.length);
+  const filePath = path.resolve(path.join(options.path, relativePathname));
   if (!filePath.startsWith(options.path)) {
     throw new HTTPResponseError(403, "Path traversal is not allowed");
   }
 
-  if (!options.hidden && /\/\.[^.\\]/.test(url.pathname)) {
+  if (!options.hidden && /\/\.[^.\\]/.test(pathname)) {
     // no hidden files / folders (unless allowed)
     throw new HTTPResponseError(403, "No access to forbidden paths");
   }
@@ -73,11 +45,33 @@ module.exports = ctx => {
         throw new HTTPResponseError(404);
       }
       if (stats.isFile()) {
-        log("> Reading file: " + filePath);
-        res.setHeader("Content-Type", mime.getType(filePath));
-        res.setHeader("Content-Length", stats.size);
-        res.setHeader("Last-Modified", stats.mtime);
-        res.end(fs.readFileSync(filePath));
+        const isTail = url.searchParams.has('tail');
+        // check if "if-modified-since" header is present
+        if (!isTail && req.headers["if-modified-since"]) {
+          const ifModifiedSince = new Date(req.headers["if-modified-since"]);
+          if (new Date(stats.mtime.toString()) - ifModifiedSince === 0) {
+            log("> Sending not modified response");
+            res.statusCode = 304;
+            res.end();
+            return;
+          }
+        }
+        const tail = isTail && parseInt(url.searchParams.get('tail') || 10);
+        log("> Reading file: " + filePath + (isTail ? ` (tail=${tail})` : ""));
+        const contentType = mime.getType(filePath);
+        res.setHeader("Content-Type", contentType);
+        if (!isTail) {
+          res.setHeader("Content-Length", stats.size);
+          res.setHeader("Last-Modified", stats.mtime);
+          res.end(fs.readFileSync(filePath));
+        } else if (contentType && (contentType.startsWith("text") || contentType.startsWith('application'))) {
+          return readLastLines.read(filePath, tail).then(lines => {
+            res.end(lines);
+          })
+        }
+        else { // tail not supported
+          throw new HTTPResponseError(405, "Can't tail a binary file");
+        }
       } else {
         log("> Reading directory: " + filePath);
         const files = fs
@@ -118,9 +112,9 @@ module.exports = ctx => {
               .replace(/</g, "&lt;")
               .replace(/>/g, "&gt;");
             body += `<tr>
-    <td>${file.dir ? "📁" : "📄"}</td>
-    <td><a href=".${relativePathname}${file.name}"><span>${file.name}</span></a></td>
-    <td>${file.mtime.toISOString()}</td><td>${file.size}</td><td>${file.mime || ""}</td>
+    <td><input type="radio" name="selection" value="${file.name}" /> ${file.dir ? "📁" : "📄"}</td>
+    <td><a href="${relativePathname}${file.name}"><span>${file.name}</span></a></td>
+    <td>${pdate(file.mtime)}</td><td>${file.dir ? "" : file.size}</td><td>${file.dir ? "" : file.mime || ""}</td>
 </tr>
 `;
           }
@@ -178,7 +172,11 @@ module.exports = ctx => {
       } else {
         const isRecursive = url.searchParams.has("recursive");
         log("> Deleting directory: " + filePath + (isRecursive ? " (recursive)" : ""));
-        fs.rmdirSync(filePath, isRecursive ? {recursive: true} : null);
+        if (isRecursive) {
+          fs.rmdirSync(filePath, { recursive: true });
+        } else {
+          fs.rmdirSync(filePath);
+        }
       }
       break;
     }

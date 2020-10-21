@@ -15,9 +15,12 @@ class HTTPResponseError extends Error {
   }
 
   process(res) {
+    const error = this.message || DefaultMessages[this.statusCode];
+    if (HTTPResponseError.log)
+      HTTPResponseError.log(`> Processing error ${this.statusCode} ${DefaultMessages[this.statusCode] || ""} - ${error}`)
     res.statusCode = this.statusCode;
     res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ error: this.message || DefaultMessages[this.statusCode] }));
+    res.end(JSON.stringify({ error }));
   }
 }
 
