@@ -3,7 +3,7 @@ const path = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 
-/** @type FscsOptions */
+/** @type FstpOptions */
 const argv = yargs(hideBin(process.argv))
   .usage("$0 [path]", "Run the server")
   .option("port", {

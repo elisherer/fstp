@@ -1,6 +1,6 @@
-# fscs &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/elisherer/fscs/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/fscs.svg?style=flat)](https://www.npmjs.com/package/fscs) ![Build and Test](https://github.com/elisherer/fscs/workflows/Build%20and%20Test/badge.svg) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+# fstp &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/elisherer/fstp/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/fstp.svg?style=flat)](https://www.npmjs.com/package/fstp) ![Build and Test](https://github.com/elisherer/fstp/workflows/Build%20and%20Test/badge.svg) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
-File System CRUD server
+File System Transfer Protocol - File System CRUD server (over HTTP)
 
 This "NPX ready" executable will serve any file system location as a web api supporting CRUD operations.
 - **GET** - Get file or directory (directory can be retrieved in html as well as json form to be shown on the browser, based on Accept header)
@@ -12,13 +12,13 @@ This "NPX ready" executable will serve any file system location as a web api sup
 ## Usage
 
 There are 2 options:
-- Installing globally, using `npm i -g fscs`.
-Then you can use `fscs` in any directory to start the server there.
-- Running using `npx fscs` (This will run the application without actually installing it).
+- Installing globally, using `npm i -g fstp`.
+Then you can use `fstp` in any directory to start the server there.
+- Running using `npx fstp` (This will run the application without actually installing it).
 
 ### `--help`
 ```
-fscs [path]
+fstp [path]
 
 Run the server
 
@@ -68,9 +68,9 @@ curl localhost:8210/some-dir
 curl localhost:8210/some-dir -H "Accept: application/json"
 ```
 
-* JSON response is an object containing a `result` which is `FscsFileDescriptor[]`: 
+* JSON response is an object containing a `result` which is `FstpFileDescriptor[]`: 
 ```typescript
-interface FscsFileDescriptor {
+interface FstpFileDescriptor {
   /** file / dir name */
   name: string;
   /** Whether is a directory */
@@ -123,4 +123,4 @@ curl -X DELETE "localhost:8210/some-dir?recursive"
 
 ## License
 
-fscs is [MIT Licensed](https://github.com/elisherer/fscs/blob/master/LICENSE)
+fstp is [MIT Licensed](https://github.com/elisherer/fstp/blob/master/LICENSE)

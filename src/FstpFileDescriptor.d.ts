@@ -1,4 +1,4 @@
-declare interface FscsFileDescriptor {
+declare interface FstpFileDescriptor {
   /** file / dir name */
   name: string;
   /** Whether is a directory */

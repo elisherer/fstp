@@ -12,7 +12,7 @@ const crud = require("./modules/crud");
 
 /**
  *
- * @param options {FscsOptions}
+ * @param options {FstpOptions}
  */
 const createFileServer = options => {
   const token = options.token || crypto.randomBytes(16).toString("hex");

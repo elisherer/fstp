@@ -1,10 +1,10 @@
 {
-  "name": "fscs",
-  "version": "0.3.0",
-  "description": "File System CRUD Server",
+  "name": "fstp",
+  "version": "0.9.0",
+  "description": "File system (CRUD) server CLI",
   "main": "./src/server.js",
   "bin": {
-    "fscs": "./bin/index.js"
+    "fstp": "./bin/index.js"
   },
   "scripts": {
     "dev": "node ./bin/index.js -uv",
@@ -12,12 +12,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/elisherer/fscs.git"
+    "url": "git+https://github.com/elisherer/fstp.git"
   },
   "keywords": [
     "crud",
     "fileserver",
     "filesystem",
+    "serve",
     "fs",
     "rest",
     "api"
@@ -28,9 +29,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/elisherer/fscs/issues"
+    "url": "https://github.com/elisherer/fstp/issues"
   },
-  "homepage": "https://github.com/elisherer/fscs#readme",
+  "homepage": "https://github.com/elisherer/fstp#readme",
   "dependencies": {
     "mime": "2.4.6",
     "read-last-lines": "1.7.2",

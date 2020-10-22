@@ -78,7 +78,7 @@ module.exports = ctx => {
           .readdirSync(filePath)
           .filter(f => options.hidden || f[0] !== ".")
           .map(
-            /** @returns {FscsFileDescriptor} */
+            /** @returns {FstpFileDescriptor} */
             f => {
             const fp = path.join(filePath, f);
             const fileStats = fs.statSync(fp);
