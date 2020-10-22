@@ -26,7 +26,7 @@ declare interface FstpOptions {
   /**
    *
    */
-  public?: boolean;
+  auth?: string;
   /**
    *
    */
@@ -35,6 +35,10 @@ declare interface FstpOptions {
    *
    */
   token?: string;
+  /**
+   *
+   */
+  user?: string;
   /**
    *
    */

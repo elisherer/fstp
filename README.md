@@ -19,30 +19,38 @@ Then you can use `fstp` in any directory to start the server there.
 ### `--help`
 ```
 fstp [path]
-
-Run the server
-
-Options:
-      --version   Show version number                                  [boolean]
-  -p, --port      Port to listen on                     [number] [default: 8210]
-  -h, --host      Host to listen on              [string] [default: "127.0.0.1"]
-  -r, --readonly  Read only file system (allow only GET operations)
-                                                      [boolean] [default: false]
-  -v, --verbose   Verbose logging                     [boolean] [default: false]
-  -f, --prefix    Path prefix (e.g. /some-route)          [string] [default: ""]
-  -c, --cors      Whether to allow CORS                [boolean] [default: true]
-  -u, --public    Toggle authorization requirement    [boolean] [default: false]
-  -d, --hidden    Allow hidden files                  [boolean] [default: false]
-  -t, --token     Specify a token for authentication (if not specified, a random
-                  token will be generated)                              [string]
-      --help      Show help                                            [boolean]
+    
+    Run the server
+    
+    Options:
+          --version   Show version number                                  [boolean]
+      -p, --port      Port to listen on                     [number] [default: 8210]
+      -h, --host      Host to listen on              [string] [default: "127.0.0.1"]
+      -r, --readonly  Read only file system (allow only GET operations)
+                                                          [boolean] [default: false]
+      -v, --verbose   Verbose logging                     [boolean] [default: false]
+      -f, --prefix    Path prefix (e.g. /some-route)          [string] [default: ""]
+      -c, --cors      Whether to allow CORS                [boolean] [default: true]
+      -a, --auth      Authentication scheme. For basic, provide --user with
+                      username:password string. For bearer, either provide --token
+                      or one will be generated randomly on startup.
+                            [choices: "none", "bearer", "basic"] [default: "bearer"]
+      -d, --hidden    Allow hidden files                  [boolean] [default: false]
+      -t, --token     Specify a token for bearer authentication (if not specified, a
+                      random token will be generated)                       [string]
+      -u, --user      Specify a username and password for basic authentication (i.e.
+                      alice:Passw0rd)                                       [string]
+          --help      Show help                                            [boolean]
 ```
 
 ## Security
 
-The default mode is using a token which is generated on each run, the server will expect this token to exist on every call as a bearer token (i.e. `Authorization: Bearer <token>`).
+There are 3 types of authentication schemes: (set with `-a/--auth`)
+- `none` - No authentication needed
+- `basic` - Basic authentication (username and password). Specified with `-u/--user` as `<username>:<password>` string. `Authorization` header should have the format of `Basic <BASE64_ENCODED_USER_PASS>`.
+- `bearer` [default] - A token. Specified with `-t/--token` or generated randomly on startup. `Authorization` header should have the format of `Bearer <TOKEN>`.
 
-To disable that behavior, use the `--public` option (this will also allow to use the browser to navigate in the folders).
+Using `none` or `basic` also allows to use a browser.
 
 ## Examples
 

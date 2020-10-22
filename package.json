@@ -1,13 +1,15 @@
 {
   "name": "fstp",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "File system (CRUD) server CLI",
   "main": "./src/server.js",
   "bin": {
     "fstp": "./bin/index.js"
   },
   "scripts": {
-    "dev": "node ./bin/index.js -uv",
+    "dev": "node ./bin/index.js -v --auth=none",
+    "dev:basic": "node ./bin/index.js -v -a basic -u admin:admin",
+    "help": "node ./bin/index.js --help",
     "test": "jest"
   },
   "repository": {

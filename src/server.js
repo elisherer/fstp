@@ -15,7 +15,12 @@ const crud = require("./modules/crud");
  * @param options {FstpOptions}
  */
 const createFileServer = options => {
-  const token = options.token || crypto.randomBytes(16).toString("hex");
+  const token =
+    options.auth === "bearer"
+      ? options.token || crypto.randomBytes(16).toString("hex")
+      : options.auth === "basic"
+      ? Buffer.from(options.user, "utf8").toString("base64")
+      : null;
 
   http
     .createServer((req, res) => {
@@ -23,10 +28,18 @@ const createFileServer = options => {
         const log = options.verbose ? (...args) => console.log(...args) : () => {};
         HTTPResponseError.log = log;
         const url = new URL(req.url, `http://${req.headers.host}`);
-        const ctx = { req, res, options, token, log, url, pathname: decodeURIComponent(url.pathname) };
+        const ctx = {
+          req,
+          res,
+          options,
+          token,
+          log,
+          url,
+          pathname: decodeURIComponent(url.pathname)
+        };
         if (options.verbose) logger(ctx);
         if (options.cors && cors(ctx)) return;
-        if (!options.public) auth(ctx);
+        if (options.auth !== "none") auth(ctx);
         if (_static(ctx)) return;
         nocache(ctx);
         crud(ctx);
@@ -41,7 +54,7 @@ const createFileServer = options => {
     .listen(options.port, options.host, () => {
       let listenMessage = `\nServer is listening on ${green(options.host + ":" + options.port)}`;
       listenMessage += `, serving folder ${blue(options.path)}.`;
-      if (!options.public) {
+      if (options.auth === "bearer" && !options.token) {
         listenMessage += `\nUse this token for authentication: ${red(token)}`;
       }
       console.log(listenMessage);

@@ -42,11 +42,12 @@ const argv = yargs(hideBin(process.argv))
     type: "boolean",
     description: "Whether to allow CORS"
   })
-  .option("public", {
-    alias: "u",
-    default: false,
-    type: "boolean",
-    description: "Toggle authorization requirement"
+  .option("auth", {
+    alias: "a",
+    default: "bearer",
+    choices: ["none", "bearer", "basic"],
+    description:
+      "Authentication scheme. For basic, provide --user with username:password string. For bearer, either provide --token or one will be generated randomly on startup."
   })
   .option("hidden", {
     alias: "d",
@@ -58,7 +59,12 @@ const argv = yargs(hideBin(process.argv))
     alias: "t",
     type: "string",
     description:
-      "Specify a token for authentication (if not specified, a random token will be generated)"
+      "Specify a token for bearer authentication (if not specified, a random token will be generated)"
+  })
+  .option("user", {
+    alias: "u",
+    type: "string",
+    description: "Specify a username and password for basic authentication (i.e. alice:Passw0rd)"
   })
   .help().argv;
 argv.path = argv.path ? path.resolve(argv.path) : process.cwd();
