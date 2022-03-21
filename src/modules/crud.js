@@ -91,7 +91,7 @@ module.exports = ctx => {
             };
           })
           .sort((a, b) => b.dir - a.dir || a.name.localeCompare(b.name));
-        if (req.headers.accept.includes("application/json")) {
+        if (req.headers.accept && req.headers.accept.includes("application/json")) {
           res.setHeader("Content-Type", "application/json");
           res.write(JSON.stringify({result: files}, null, 2));
           res.end();

@@ -1,3 +1,4 @@
+const packageJSON = require('../package.json');
 const crypto = require("crypto");
 const http = require("http");
 const { blue, green, red } = require("./colors");
@@ -52,7 +53,7 @@ const createFileServer = options => {
       }
     })
     .listen(options.port, options.host, () => {
-      let listenMessage = `\nServer is listening on ${green(options.host + ":" + options.port)}`;
+      let listenMessage = `\nFSTP Server (v${packageJSON.version}) is listening on ${green(options.host + ":" + options.port)}`;
       listenMessage += `, serving folder ${blue(options.path)}.`;
       if (options.auth === "bearer" && !options.token) {
         listenMessage += `\nUse this token for authentication: ${red(token)}`;
