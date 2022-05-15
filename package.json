@@ -1,6 +1,6 @@
 {
   "name": "fstp",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "File system (CRUD) server CLI",
   "main": "./src/server.js",
   "bin": {

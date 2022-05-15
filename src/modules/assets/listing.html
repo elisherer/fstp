@@ -31,7 +31,7 @@
     <tr><td colspan="5"><hr></td></tr>
     {{body}}
     <tr><td colspan="5"><hr></td></tr>
-    <tr><td colspan="5">fstp © {{year}}</td></tr>
+    <tr><td colspan="5">fstp {{version}} © {{year}}</td></tr>
     </tbody>
   </table>
 </form>
@@ -43,7 +43,7 @@
     if (new_name) {
       fetch(root + new_name, { method: 'POST' }).then(res => {
         if (res.status < 300) { location.reload(); }
-        else { alert('Delete failed'); }
+        else { alert('Folder creation failed (' + res.status + ': ' + res.statusText + ')'); }
       });
     }
   }
@@ -56,7 +56,7 @@
     if (confirm('Are you sure you want to delete ' + selection + '?'))
       fetch(root + selection, { method: 'DELETE' }).then(res => {
         if (res.status < 300) { location.reload(); }
-        else { alert('Delete failed'); }
+        else { alert('Delete failed (' + res.status + ': ' + res.statusText + ')'); }
       });
   }
   function move_entry(e) {
@@ -69,7 +69,7 @@
     if (new_path)
       fetch(root + selection + '?to=' + encodeURIComponent(new_path), { method: 'PATCH' }).then(res => {
         if (res.status < 300) { location.reload(); }
-        else { alert('Rename/Move failed'); }
+        else { alert('Rename/Move failed (' + res.status + ': ' + res.statusText + ')'); }
       });
   }
 </script>

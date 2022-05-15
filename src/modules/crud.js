@@ -2,10 +2,12 @@ const fs = require("fs");
 const path = require("path");
 const mime = require("mime");
 const readLastLines = require('read-last-lines');
+const packageJSON = require('../../package.json');
 const { HTTPResponseError } = require("../HTTPResponseError");
 
 const HTML_TEMPLATE = fs.readFileSync(path.join(__dirname, 'assets/listing.html'), 'utf8')
-  .replace('{{year}}', new Date().getFullYear().toString());
+  .replace('{{year}}', new Date().getFullYear().toString())
+  .replace("{{version}}", packageJSON.version);
 const pdate = date => date.toISOString().replace(/[TZ]/g,' ');
 
 module.exports = ctx => {
